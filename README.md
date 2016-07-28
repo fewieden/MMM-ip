@@ -1,5 +1,5 @@
 # MMM-ip
-IPv4 Network Address Module for MagicMirror<sup>2</sup>
+IPv4/IPv6 Network Address Module for MagicMirror<sup>2</sup>
 
 ## Dependencies
   * An installation of [MagicMirror<sup>2</sup>](https://github.com/MichMich/MagicMirror)
@@ -26,6 +26,7 @@ IPv4 Network Address Module for MagicMirror<sup>2</sup>
         config: {
             fontSize: 12,
             dimmed: false
+            show: 'IPv4'
         }
     }
     ```
@@ -35,3 +36,4 @@ IPv4 Network Address Module for MagicMirror<sup>2</sup>
 | --- | --- | --- |
 | `fontSize` | 9 | Font size in pixels |
 | `dimmed` | true | Boolean for discrete visibility |
+| `show` | 'both' | Network Address type to display 'IPv4', 'IPv6' or 'both' |
