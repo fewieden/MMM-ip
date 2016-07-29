@@ -1,6 +1,6 @@
 Module.register("MMM-ip",{
     defaults: {
-        fontSize: 12,
+        fontSize: 9,
         dimmed: true,
         show: 'both'
     },
