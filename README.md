@@ -26,7 +26,8 @@ IPv4/IPv6 Network Address Module for MagicMirror<sup>2</sup>
         config: {
             fontSize: 12,
             dimmed: false
-            show: 'IPv4'
+            showFamily: 'IPv4',
+            showType: 'eth0'
         }
     }
     ```
@@ -36,4 +37,5 @@ IPv4/IPv6 Network Address Module for MagicMirror<sup>2</sup>
 | --- | --- | --- |
 | `fontSize` | 9 | Font size in pixels |
 | `dimmed` | true | Boolean for discrete visibility |
-| `show` | 'both' | Network Address type to display 'IPv4', 'IPv6' or 'both' |
+| `showFamily` | 'both' | Network Address family to display 'IPv4', 'IPv6' or 'both' |
+| `showType` | 'both' | Network interface type to display 'eth0', 'wlan0' or 'both' |
