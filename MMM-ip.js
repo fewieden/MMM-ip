@@ -37,10 +37,10 @@ Module.register("MMM-ip",{
                         }
                         wrapper.style.fontSize = this.config.fontSize + 'px';
                         for(var n = 0; n < familyKeys.length; n++){
-                            if(this.config.showFamily === 'both' || this.config.showFamily === this.ips[typeKeys[i][familyKeys[n]]].family){
+                            if(this.config.showFamily === 'both' || this.config.showFamily === this.ips[typeKeys[i]][familyKeys[n]].family){
                                 var div = document.createElement("div");
                                 div.classList.add("line");
-                                div.innerHTML = typeKeys[i].toUpperCase() + " " + this.ips[typeKeys[i][familyKeys[n]]].family + ": " + this.ips[typeKeys[i][familyKeys[n]]].address;
+                                div.innerHTML = typeKeys[i].toUpperCase() + " " + this.ips[typeKeys[i]][familyKeys[n]].family + ": " + this.ips[typeKeys[i]][familyKeys[n]].address;
                                 wrapper.appendChild(div);
                             }
                         }
