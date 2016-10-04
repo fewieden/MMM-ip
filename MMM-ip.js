@@ -94,7 +94,6 @@ Module.register("MMM-ip",{
             if(this.config.dimmed){
                 wrapper.classList.add('dimmed');
             }
-            wrapper.classList.add("modal", "align-left");
 
             var modules = document.querySelectorAll(".module");
             for (var i = 0; i < modules.length; i++) {
@@ -107,10 +106,10 @@ Module.register("MMM-ip",{
                 }
             }
 
-            if(this.interfaces){
-                this.appendInterfaces(typeKeys, wrapper);
-            } else if(this.help) {
+            if(this.help){
                 this.appendHelp(wrapper);
+            } else {
+                this.appendInterfaces(typeKeys, wrapper);
             }
         } else {
             var text = document.createElement("div");
@@ -128,10 +127,13 @@ Module.register("MMM-ip",{
     },
 
     appendInterfaces: function(typeKeys, appendTo){
-        var header = document.createElement("div");
-        header.classList.add("bright");
-        header.innerHTML = this.translate("NETWORK_INTERFACES");
-        appendTo.appendChild(header);
+        if(this.config.voice){
+            appendTo.classList.add("modal", "align-left");
+            var header = document.createElement("div");
+            header.classList.add("bright");
+            header.innerHTML = this.translate("NETWORK_INTERFACES");
+            appendTo.appendChild(header);
+        }
         for(var i = 0; i < typeKeys.length; i++){
             if((this.config.showType === 'both' || this.config.showType === typeKeys[i]) && this.types.indexOf(typeKeys[i]) !== -1){
                 var familyKeys = Object.keys(this.ips[typeKeys[i]]);

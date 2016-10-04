@@ -1,6 +1,10 @@
 # MMM-ip
 IPv4/IPv6 Network Address Module for MagicMirror<sup>2</sup>
 
+## Example
+
+![](.github/example.jpg) ![](.github/example2.jpg)
+
 ## Dependencies
   * An installation of [MagicMirror<sup>2</sup>](https://github.com/MichMich/MagicMirror)
   * OPTIONAL: [Voice Control](https://github.com/fewieden/MMM-voice)
