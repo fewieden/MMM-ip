@@ -1,3 +1,23 @@
 .MMM-ip .line {
     line-height: 1.2em;
 }
+
+.MMM-ip.voice-mode {
+    margin-top: 0px;
+}
+
+.MMM-ip-blur {
+    -webkit-filter: blur(2px) brightness(50%);
+}
+
+.MMM-ip .modal {
+    position: fixed;
+    text-align: left;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+}
+
+.MMM-ip .modal ul {
+    margin: 0px;
+}

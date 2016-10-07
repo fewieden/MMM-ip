@@ -1,3 +1,10 @@
+/* Magic Mirror
+ * Module: MMM-ip
+ *
+ * By fewieden https://github.com/fewieden/MMM-ip
+ * MIT Licensed.
+ */
+
 const NodeHelper = require('node_helper');
 const interfaces = require('os').networkInterfaces();
 
