@@ -61,7 +61,7 @@ Module.register("MMM-ip",{
             this.updateDom(300);
         }
         if (notification === 'DOM_OBJECTS_CREATED' && this.config.startHidden === true) {
-            this.hide;
+            this.hide();
         }
     },
 
