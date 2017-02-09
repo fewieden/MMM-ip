@@ -37,7 +37,8 @@ Module.register("MMM-ip",{
 	    voice: false,
         dimmed: true,
         showFamily: 'both',
-        showType: 'both'
+        showType: 'both',
+        startHidden: false
     },
 
     start: function() {
@@ -58,6 +59,9 @@ Module.register("MMM-ip",{
             this.help = false;
             this.interfaces = false;
             this.updateDom(300);
+        }
+        if (notification === 'DOM_OBJECTS_CREATED' && this.config.startHidden === true) {
+            this.hide;
         }
     },
 
