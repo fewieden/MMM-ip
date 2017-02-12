@@ -3,7 +3,7 @@
 }
 
 .MMM-ip.voice-mode {
-    margin-top: 0px;
+    margin-top: 0;
 }
 
 .MMM-ip-blur {
@@ -16,8 +16,11 @@
     left: 50%;
     top: 50%;
     -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 .MMM-ip .modal ul {
-    margin: 0px;
+    margin: 0;
 }

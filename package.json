@@ -1,0 +1,30 @@
+{
+  "name": "mmm-ip",
+  "version": "1.0.0",
+  "description": "IPv4/IPv6 Network Address Module for MagicMirror2",
+  "scripts": {
+    "lint": "./node_modules/.bin/eslint . && ./node_modules/.bin/stylelint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fewieden/MMM-ip.git"
+  },
+  "keywords": [
+    "MagicMirror",
+    "network interfaces",
+    "ip"
+  ],
+  "author": "fewieden",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fewieden/MMM-ip/issues"
+  },
+  "homepage": "https://github.com/fewieden/MMM-ip#readme",
+  "devDependencies": {
+    "eslint": "^3.14.1",
+    "eslint-config-airbnb-base": "^11.0.1",
+    "eslint-plugin-import": "^2.2.0",
+    "stylelint": "^7.8.0",
+    "stylelint-config-standard": "^16.0.0"
+  }
+}
