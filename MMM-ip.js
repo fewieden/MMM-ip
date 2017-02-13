@@ -13,9 +13,10 @@ Module.register('MMM-ip', {
 
     types: ['eth0', 'wlan0'],
 
-    interfaces: false,
-
-    help: false,
+    modals: {
+        interfaces: false,
+        help: false
+    },
 
     voice: {
         mode: 'NETWORK',
@@ -57,28 +58,37 @@ Module.register('MMM-ip', {
         } else if (notification === 'VOICE_INTERFACES' && sender.name === 'MMM-voice') {
             this.checkCommands(payload);
         } else if (notification === 'VOICE_MODE_CHANGED' && sender.name === 'MMM-voice' && payload.old === this.voice.mode) {
-            this.help = false;
-            this.interfaces = false;
+            this.closeAllModals();
             this.updateDom(300);
+        }
+    },
+
+    closeAllModals() {
+        const modals = Object.keys(this.modals);
+        modals.forEach(modal => (this.modals[modal] = false));
+    },
+
+    isModalActive() {
+        const modals = Object.keys(this.modals);
+        return modals.some(modal => this.modals[modal] === true);
+    },
+
+    handleModals(data, modal, open, close) {
+        if (close.test(data) || (this.modals[modal] && !open.test(data))) {
+            this.closeAllModals();
+        } else if (open.test(data) || (!this.modals[modal] && !close.test(data))) {
+            this.closeAllModals();
+            this.modals[modal] = true;
         }
     },
 
     checkCommands(data) {
         if (/(HELP)/g.test(data)) {
-            if (/(CLOSE)/g.test(data) || (this.help && !/(OPEN)/g.test(data))) {
-                this.help = false;
-            } else if (/(OPEN)/g.test(data) || (!this.help && !/(CLOSE)/g.test(data))) {
-                this.interfaces = false;
-                this.help = true;
-            }
+            this.handleModals(data, 'help', /(OPEN)/g, /(CLOSE)/g);
         } else if (/(INTERFACES)/g.test(data)) {
-            if (/(HIDE)/g.test(data) || (this.help && !/(SHOW)/g.test(data))) {
-                this.interfaces = false;
-            } else if (/(SHOW)/g.test(data) || (!this.help && !/(HIDE)/g.test(data))) {
-                this.help = false;
-                this.interfaces = true;
-            }
+            this.handleModals(data, 'interfaces', /(SHOW)/g, /(HIDE)/g);
         }
+
         this.updateDom(300);
     },
 
@@ -99,7 +109,7 @@ Module.register('MMM-ip', {
             const modules = document.querySelectorAll('.module');
             for (let i = 0; i < modules.length; i += 1) {
                 if (!modules[i].classList.contains('MMM-ip')) {
-                    if (this.interfaces || this.help) {
+                    if (this.isModalActive()) {
                         modules[i].classList.add('MMM-ip-blur');
                     } else {
                         modules[i].classList.remove('MMM-ip-blur');
@@ -107,7 +117,7 @@ Module.register('MMM-ip', {
                 }
             }
 
-            if (this.help) {
+            if (this.modals.help) {
                 this.appendHelp(wrapper);
             } else {
                 this.appendInterfaces(typeKeys, wrapper);
