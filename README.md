@@ -36,6 +36,7 @@ IPv4/IPv6 Network Address Module for MagicMirror<sup>2</sup>
 | `showFamily` | `'both'` | Network Address family to display `'IPv4'`, `'IPv6'` or `'both'` |
 | `showType` | `'both'` | Network interface type to display `'eth0'`, `'wlan0'` or `'both'` |
 | `voice` | `false` | Boolean for optional voice commands |
+| `startHidden` | `false` | When `true` this module starts in a hidden state, this is only really meaningful if you use [MMM-voice](https://github.com/fewieden/MMM-voice) or [MMM-Remote-Control](https://github.com/Jopyth/MMM-Remote-Control.git) to control showing this module.|
 
 ## OPTIONAL: Voice Control
 

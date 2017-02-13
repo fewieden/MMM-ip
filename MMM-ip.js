@@ -40,7 +40,8 @@ Module.register('MMM-ip', {
         voice: false,
         dimmed: true,
         showFamily: 'both',
-        showType: 'both'
+        showType: 'both',
+        startHidden: false
     },
 
     start() {
@@ -60,6 +61,9 @@ Module.register('MMM-ip', {
         } else if (notification === 'VOICE_MODE_CHANGED' && sender.name === 'MMM-voice' && payload.old === this.voice.mode) {
             this.closeAllModals();
             this.updateDom(300);
+        }
+        if (notification === 'DOM_OBJECTS_CREATED' && this.config.startHidden === true) {
+            this.hide();
         }
     },
 
