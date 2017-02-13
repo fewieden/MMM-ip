@@ -1,4 +1,4 @@
-# MMM-ip
+# MMM-ip [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://raw.githubusercontent.com/fewieden/MMM-ip/master/LICENSE) [![Build Status](https://travis-ci.org/fewieden/MMM-ip.svg?branch=master)](https://travis-ci.org/fewieden/MMM-ip) [![Code Climate](https://codeclimate.com/github/fewieden/MMM-ip/badges/gpa.svg?style=flat)](https://codeclimate.com/github/fewieden/MMM-ip) [![Known Vulnerabilities](https://snyk.io/test/github/fewieden/mmm-ip/badge.svg)](https://snyk.io/test/github/fewieden/mmm-ip)
 
 IPv4/IPv6 Network Address Module for MagicMirror<sup>2</sup>
 
