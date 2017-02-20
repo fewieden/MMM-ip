@@ -187,8 +187,10 @@ Module.register('MMM-ip', {
     },
 
     appendHelp(appendTo) {
+        appendTo.classList.add('modal', 'align-left');
+        
         const title = document.createElement('h1');
-        title.classList.add('medium');
+        title.classList.add('medium', 'bright');
         title.innerHTML = `${this.name} - ${this.translate('COMMAND_LIST')}`;
         appendTo.appendChild(title);
 
