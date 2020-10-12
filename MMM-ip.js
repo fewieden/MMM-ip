@@ -65,6 +65,9 @@ Module.register('MMM-ip', {
         if (notification === 'DOM_OBJECTS_CREATED' && this.config.startHidden === true) {
             this.hide();
         }
+        if (this.config.startHidden === false){
+            this.handleModals('SHOW INTERFACES', 'interfaces', /(SHOW)/g, /(HIDE)/g);
+        }
     },
 
     closeAllModals() {
@@ -80,8 +83,10 @@ Module.register('MMM-ip', {
     handleModals(data, modal, open, close) {
         if (close.test(data) || (this.modals[modal] && !open.test(data))) {
             this.closeAllModals();
+            this.hide();
         } else if (open.test(data) || (!this.modals[modal] && !close.test(data))) {
             this.closeAllModals();
+            this.show();
             this.modals[modal] = true;
         }
     },
