@@ -9,20 +9,19 @@ IPv4/IPv6 Network Address Module for MagicMirror<sup>2</sup>
 ## Dependencies
 
 * An installation of [MagicMirror<sup>2</sup>](https://github.com/MichMich/MagicMirror)
-* OPTIONAL: [Voice Control](https://github.com/fewieden/MMM-voice)
-* Node.js > v0.6.0 for os.networkInterfaces()
+* OPTIONAL: [Voice Control](https://github.com/fewieden/MMM-voice) and [MMM-Modal](https://github.com/fewieden/MMM-Modal)
 
 ## Installation
 
-1. Clone this repo into `~/MagicMirror/modules` directory.
-1. Configure your `~/MagicMirror/config/config.js`:
+* Clone this repo into `~/MagicMirror/modules` directory.
+* Configure your `~/MagicMirror/config/config.js`:
 
-```
+```js
 {
     module: 'MMM-ip',
-    position: 'bottom_right',
+    position: 'bottom_right', // Remove the position if you want to run the module in voice only mode
     config: {
-        ...
+        // all your config options, which are different than their default values
     }
 }
 ```
@@ -31,16 +30,15 @@ IPv4/IPv6 Network Address Module for MagicMirror<sup>2</sup>
 
 | **Option** | **Default** | **Description** |
 | --- | --- | --- |
-| `fontSize` | `9` | Font size in pixels. Only if `voice` is set to `false` |
+| `fontSize` | `9` | Font size in pixels. |
 | `dimmed` | `true` | Boolean for discrete visibility |
-| `showFamily` | `'both'` | Network Address family to display `'IPv4'`, `'IPv6'` or `'both'` |
-| `showType` | `'both'` | Network interface type to display `'eth0'`, `'wlan0'` or `'both'` |
-| `voice` | `false` | Boolean for optional voice commands |
-| `startHidden` | `false` | When `true` this module starts in a hidden state, this is only really meaningful if you use [MMM-voice](https://github.com/fewieden/MMM-voice) or [MMM-Remote-Control](https://github.com/Jopyth/MMM-Remote-Control.git) to control showing this module.|
+| `families` | `['IPv4', 'IPv6']` | Array of network address families to display. Possible values in the array are: `'IPv4'` and `'IPv6'`. |
+| `types` | `['eth0', 'wlan0']` | Array of network interface types to display. Check the types of your network cards in the logs. They get logged on MagicMirror start. |
 
-## OPTIONAL: Voice Control
+## OPTIONAL: Voice Control and Modal
 
-This module supports voice control by [MMM-voice](https://github.com/fewieden/MMM-voice). In order to use this feature, it's required to install the voice module and set voice in config options to true.
+This module supports voice control by [MMM-voice](https://github.com/fewieden/MMM-voice) and [MMM-Modal](https://github.com/fewieden/MMM-Modal).
+In order to use this feature, it's required to install the voice and modal modules. There are no extra config options for voice control and modals needed.
 
 ### Mode
 
