@@ -1,0 +1,15 @@
+<div
+    class="{% if config.dimmed %}dimmed{% endif %}"
+    style="font-size: {{ config.fontSize }}px; line-height: {{ config.fontSize + 2 }}px;">
+    {% if not interfaces %}
+        {{ "LOADING" | translate | safe }}
+    {% else %}
+        {% for type in config.types %}
+            {% for entry in interfaces[type] %}
+                {% if includes(config.types, type) and includes(config.families, entry.family) %}
+                    <div>{{ type }} {{ entry.family }}: {{entry.address}}</div>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+</div>
