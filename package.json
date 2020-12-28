@@ -3,8 +3,8 @@
   "version": "2.0.0",
   "description": "IPv4/IPv6 Network Address Module for MagicMirror2",
   "scripts": {
-    "lint": "./node_modules/.bin/eslint .",
-    "docs": "./node_modules/.bin/jsdoc -c jsdoc.json ."
+    "lint": "eslint .",
+    "docs": "jsdoc -c jsdoc.json ."
   },
   "repository": {
     "type": "git",
