@@ -8,6 +8,10 @@
 * Integrated MMM-Modal for modal handling
 * Documentation
 
+### Fixed
+
+* MMM-voice mode in notificationReceived
+
 ### Changed
 
 * Config files
