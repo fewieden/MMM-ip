@@ -1,6 +1,7 @@
 {
   "LOADING": "Loading...",
   "NETWORK_INTERFACES": "Network Interfaces",
+  "NO_MATCHING_INTERFACE": "No matching interface found for this type",
   "COMMAND_LIST": "List of all Voice Commands",
   "MODE": "Mode",
   "VOICE_COMMANDS": "Voice Commands"
