@@ -122,52 +122,77 @@ Module.register('MMM-ip', {
         if (notification === 'ALL_MODULES_STARTED') {
             this.sendNotification('REGISTER_VOICE_MODULE', this.voice);
         } else if (notification === 'VOICE_NETWORK' && sender.name === 'MMM-voice') {
-            this.checkCommands(payload);
+            this.executeVoiceCommands(payload);
         } else if (notification === 'VOICE_MODE_CHANGED' && sender.name === 'MMM-voice' && payload.old === this.voice.mode) {
             this.sendNotification('CLOSE_MODAL');
         }
     },
 
     /**
-     * @function checkCommands
-     * @description Checks for voice commands.
+     * @function handleHelpModal
+     * @description Opens/closes help modal based on voice commands.
      *
      * @param {string} data - Text with commands.
      *
      * @returns {void}
      */
-    checkCommands(data) {
-        if (/(HELP)/g.test(data)) {
-            if (/(CLOSE)/g.test(data) && !/(OPEN)/g.test(data)) {
-                this.sendNotification('CLOSE_MODAL');
-            } else if (/(OPEN)/g.test(data) && !/(CLOSE)/g.test(data)) {
-                this.sendNotification('OPEN_MODAL', {
-                    template: 'templates/HelpModal.njk',
-                    data: {
-                        ...this.voice,
-                        fns: {
-                            translate: this.translate.bind(this)
-                        }
+    handleHelpModal(data) {
+        if (/(CLOSE)/g.test(data) && !/(OPEN)/g.test(data)) {
+            this.sendNotification('CLOSE_MODAL');
+        } else if (/(OPEN)/g.test(data) && !/(CLOSE)/g.test(data)) {
+            this.sendNotification('OPEN_MODAL', {
+                template: 'templates/HelpModal.njk',
+                data: {
+                    ...this.voice,
+                    fns: {
+                        translate: this.translate.bind(this)
                     }
-                });
-            }
+                }
+            });
+        }
+    },
+
+    /**
+     * @function handleInterfaceModal
+     * @description Opens/closes interface modal based on voice commands.
+     *
+     * @param {string} data - Text with commands.
+     *
+     * @returns {void}
+     */
+    handleInterfaceModal(data) {
+        if (/(HIDE)/g.test(data) && !/(SHOW)/g.test(data)) {
+            this.sendNotification('CLOSE_MODAL');
+        } else if (/(SHOW)/g.test(data) && !/(HIDE)/g.test(data)) {
+            console.log(this.interfaces);
+            this.sendNotification('OPEN_MODAL', {
+                template: 'templates/InterfaceModal.njk',
+                data: {
+                    config: this.config,
+                    interfaces: this.interfaces,
+                    fns: {
+                        translate: this.translate.bind(this),
+                        includes: this.includes,
+                        getMacAddress: this.getMacAddress
+                    }
+                },
+            });
+        }
+    },
+
+    /**
+     * @function executeVoiceCommands
+     * @description Executes the voice commands.
+     *
+     * @param {string} data - Text with commands.
+     *
+     * @returns {void}
+     */
+    executeVoiceCommands(data) {
+        if (/(HELP)/g.test(data)) {
+            return this.handleHelpModal(data);
         } else if (/(INTERFACES)/g.test(data)) {
-            if (/(HIDE)/g.test(data) && !/(SHOW)/g.test(data)) {
-                this.sendNotification('CLOSE_MODAL');
-            } else if (/(SHOW)/g.test(data) && !/(HIDE)/g.test(data)) {
-                this.sendNotification('OPEN_MODAL', {
-                    template: 'templates/InterfaceModal.njk',
-                    data: {
-                        config: this.config,
-                        interfaces: this.interfaces,
-                        fns: {
-                            translate: this.translate.bind(this),
-                            includes: this.includes,
-                            getMacAddress: this.getMacAddress
-                        }
-                    },
-                });
-            }
+            return this.handleInterfaceModal(data);
         }
     },
 
@@ -195,7 +220,7 @@ Module.register('MMM-ip', {
      *
      * @returns {string} Mac address or empty string.
      */
-    getMacAddress(array) {
+    getMacAddress(array= []) {
         for (const item of array) {
             if (item.mac) {
                 return `(MAC: ${item.mac})`;
@@ -214,7 +239,7 @@ Module.register('MMM-ip', {
      *
      * @returns {boolean} Is the item included in the array?
      */
-    includes(array, item) {
+    includes(array= [], item) {
         return array.includes(item);
     },
 

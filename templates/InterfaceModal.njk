@@ -5,5 +5,7 @@
         {% if data.fns.includes(data.config.types, type) and data.fns.includes(data.config.families, entry.family) %}
             <div>{{ entry.family }}: {{ entry.address }}</div>
         {% endif %}
+    {% else %}
+        <div>{{ data.fns.translate("NO_MATCHING_INTERFACE") }}</div>
     {% endfor %}
 {% endfor %}
