@@ -1,0 +1,11 @@
+<div class="bright">{{ data.fns.translate("NETWORK_INTERFACES") }}</div>
+{% for type in data.config.types %}
+    <div class="thin">{{ type | upper }} {{ data.fns.getMacAddress(data.interfaces[type]) }}</div>
+    {% for entry in data.interfaces[type] %}
+        {% if data.fns.includes(data.config.types, type) and data.fns.includes(data.config.families, entry.family) %}
+            <div>{{ entry.family }}: {{ entry.address }}</div>
+        {% endif %}
+    {% else %}
+        <div>{{ data.fns.translate("NO_MATCHING_INTERFACE") }}</div>
+    {% endfor %}
+{% endfor %}

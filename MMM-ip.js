@@ -1,23 +1,38 @@
-/* global Module Log */
-
-/* Magic Mirror
- * Module: MMM-ip
+/**
+ * @file MMM-ip.js
  *
- * By fewieden https://github.com/fewieden/MMM-ip
- * MIT Licensed.
+ * @author fewieden
+ * @license MIT
+ *
+ * @see  https://github.com/fewieden/MMM-ip
  */
 
+/**
+ * @external Module
+ * @see https://github.com/MichMich/MagicMirror/blob/master/js/module.js
+ */
+
+/**
+ * @external Log
+ * @see https://github.com/MichMich/MagicMirror/blob/master/js/logger.js
+ */
+
+/**
+ * @module MMM-ip
+ * @description Frontend for the module to display data.
+ *
+ * @requires external:Module
+ * @requires external:Log
+ */
 Module.register('MMM-ip', {
+    /** @member {?Object} interfaces - Network interfaces of the computer. */
+    interfaces: null,
 
-    ips: {},
-
-    types: ['eth0', 'wlan0'],
-
-    modals: {
-        interfaces: false,
-        help: false
-    },
-
+    /**
+     * @member {Object} voice - Defines the voice recognition part.
+     * @property {string} mode - MMM-voice mode of this module.
+     * @property {string[]} sentences - All commands of this module.
+     */
     voice: {
         mode: 'NETWORK',
         sentences: [
@@ -28,6 +43,27 @@ Module.register('MMM-ip', {
         ]
     },
 
+    /**
+     * @member {Object} defaults - Defines the default config values.
+     * @property {int} fontSize - Size of the text displayed in pixel.
+     * @property {boolean} dimmed - Flag to enable/disable dimming of text.
+     * @property {string[]} types - Network interface types.
+     * @property {string[]} families - IP address families.
+     */
+    defaults: {
+        fontSize: 9,
+        dimmed: true,
+        types: ['eth0', 'wlan0'],
+        families: ['IPv4', 'IPv6']
+    },
+
+    /**
+     * @function getTranslations
+     * @description Translations for this module.
+     * @override
+     *
+     * @returns {Object.<string, string>} Available translations for this module (key: language code, value: filepath).
+     */
     getTranslations() {
         return {
             en: 'translations/en.json',
@@ -35,179 +71,185 @@ Module.register('MMM-ip', {
         };
     },
 
-    defaults: {
-        fontSize: 9,
-        voice: false,
-        dimmed: true,
-        showFamily: 'both',
-        showType: 'both',
-        startHidden: false
+    /**
+     * @function getTemplate
+     * @description Nunjuck template.
+     * @override
+     *
+     * @returns {string} Path to nunjuck template.
+     */
+    getTemplate() {
+        return 'templates/MMM-ip.njk';
     },
 
+    /**
+     * @function getTemplateData
+     * @description Data that is needed to render the nunjuck template.
+     * @override
+     *
+     * @returns {Object} Data for the nunjuck template.
+     */
+    getTemplateData() {
+        return {
+            config: this.config,
+            interfaces: this.interfaces,
+        };
+    },
+
+    /**
+     * @function start
+     * @description Adds nunjuck globals and requests network interfaces from the node_helper.
+     * @override
+     *
+     * @returns {void}
+     */
     start() {
         Log.info(`Starting module: ${this.name}`);
-        this.sendSocketNotification('GET_IPS', {});
+        this.addGlobals();
+        this.sendSocketNotification('GET_NETWORK_INTERFACES');
     },
 
-    getStyles() {
-        return ['MMM-ip.css'];
-    },
-
+    /**
+     * @function notificationReceived
+     * @description Handles incoming broadcasts from other modules or the MagicMirror core.
+     * @override
+     *
+     * @param {string} notification - Notification name
+     * @param {*} payload - Detailed payload of the notification.
+     * @param {MM} [sender] - The sender of the notification. If sender is undefined the sender is the core.
+     */
     notificationReceived(notification, payload, sender) {
         if (notification === 'ALL_MODULES_STARTED') {
             this.sendNotification('REGISTER_VOICE_MODULE', this.voice);
-        } else if (notification === 'VOICE_INTERFACES' && sender.name === 'MMM-voice') {
-            this.checkCommands(payload);
+        } else if (notification === 'VOICE_NETWORK' && sender.name === 'MMM-voice') {
+            this.executeVoiceCommands(payload);
         } else if (notification === 'VOICE_MODE_CHANGED' && sender.name === 'MMM-voice' && payload.old === this.voice.mode) {
-            this.closeAllModals();
+            this.sendNotification('CLOSE_MODAL');
+        }
+    },
+
+    /**
+     * @function handleHelpModal
+     * @description Opens/closes help modal based on voice commands.
+     *
+     * @param {string} data - Text with commands.
+     *
+     * @returns {void}
+     */
+    handleHelpModal(data) {
+        if (/(CLOSE)/g.test(data) && !/(OPEN)/g.test(data)) {
+            this.sendNotification('CLOSE_MODAL');
+        } else if (/(OPEN)/g.test(data) && !/(CLOSE)/g.test(data)) {
+            this.sendNotification('OPEN_MODAL', {
+                template: 'templates/HelpModal.njk',
+                data: {
+                    ...this.voice,
+                    fns: {
+                        translate: this.translate.bind(this)
+                    }
+                }
+            });
+        }
+    },
+
+    /**
+     * @function handleInterfaceModal
+     * @description Opens/closes interface modal based on voice commands.
+     *
+     * @param {string} data - Text with commands.
+     *
+     * @returns {void}
+     */
+    handleInterfaceModal(data) {
+        if (/(HIDE)/g.test(data) && !/(SHOW)/g.test(data)) {
+            this.sendNotification('CLOSE_MODAL');
+        } else if (/(SHOW)/g.test(data) && !/(HIDE)/g.test(data)) {
+            console.log(this.interfaces);
+            this.sendNotification('OPEN_MODAL', {
+                template: 'templates/InterfaceModal.njk',
+                data: {
+                    config: this.config,
+                    interfaces: this.interfaces,
+                    fns: {
+                        translate: this.translate.bind(this),
+                        includes: this.includes,
+                        getMacAddress: this.getMacAddress
+                    }
+                },
+            });
+        }
+    },
+
+    /**
+     * @function executeVoiceCommands
+     * @description Executes the voice commands.
+     *
+     * @param {string} data - Text with commands.
+     *
+     * @returns {void}
+     */
+    executeVoiceCommands(data) {
+        if (/(HELP)/g.test(data)) {
+            return this.handleHelpModal(data);
+        } else if (/(INTERFACES)/g.test(data)) {
+            return this.handleInterfaceModal(data);
+        }
+    },
+
+    /**
+     * @function socketNotificationReceived
+     * @description Handles incoming messages from node_helper.
+     * @override
+     *
+     * @param {string} notification - Notification name
+     * @param {*} payload - Detailed payload of the notification.
+     */
+    socketNotificationReceived(notification, payload) {
+        if (notification === 'NETWORK_INTERFACES') {
+            this.interfaces = payload;
+            Log.info('interfaces', payload);
             this.updateDom(300);
         }
-        if (notification === 'DOM_OBJECTS_CREATED' && this.config.startHidden === true) {
-            this.hide();
-        }
     },
 
-    closeAllModals() {
-        const modals = Object.keys(this.modals);
-        modals.forEach(modal => (this.modals[modal] = false));
-    },
-
-    isModalActive() {
-        const modals = Object.keys(this.modals);
-        return modals.some(modal => this.modals[modal] === true);
-    },
-
-    handleModals(data, modal, open, close) {
-        if (close.test(data) || (this.modals[modal] && !open.test(data))) {
-            this.closeAllModals();
-        } else if (open.test(data) || (!this.modals[modal] && !close.test(data))) {
-            this.closeAllModals();
-            this.modals[modal] = true;
-        }
-    },
-
-    checkCommands(data) {
-        if (/(HELP)/g.test(data)) {
-            this.handleModals(data, 'help', /(OPEN)/g, /(CLOSE)/g);
-        } else if (/(INTERFACES)/g.test(data)) {
-            this.handleModals(data, 'interfaces', /(SHOW)/g, /(HIDE)/g);
-        }
-
-        this.updateDom(300);
-    },
-
-
-    getDom() {
-        const wrapper = document.createElement('div');
-        if (this.config.voice) {
-            document.getElementById(this.identifier).classList.add('voice-mode');
-        } else {
-            wrapper.style.fontSize = `${this.config.fontSize}px`;
-        }
-        const typeKeys = Object.keys(this.ips);
-        if (typeKeys.length > 0) {
-            if (this.config.dimmed) {
-                wrapper.classList.add('dimmed');
-            }
-
-            const modules = document.querySelectorAll('.module');
-            for (let i = 0; i < modules.length; i += 1) {
-                if (!modules[i].classList.contains('MMM-ip')) {
-                    if (this.isModalActive()) {
-                        modules[i].classList.add('MMM-ip-blur');
-                    } else {
-                        modules[i].classList.remove('MMM-ip-blur');
-                    }
-                }
-            }
-
-            if (this.modals.help) {
-                this.appendHelp(wrapper);
-            } else {
-                this.appendInterfaces(typeKeys, wrapper);
-            }
-        } else {
-            const text = document.createElement('div');
-            text.innerHTML = this.translate('LOADING');
-            wrapper.appendChild(text);
-        }
-        return wrapper;
-    },
-
-    socketNotificationReceived(notification, payload) {
-        if (notification === 'IPS') {
-            this.ips = payload;
-            this.updateDom();
-        }
-    },
-
-    appendInterfaces(typeKeys, appendTo) {
-        if (this.config.voice) {
-            appendTo.classList.add('modal', 'align-left');
-            const header = document.createElement('div');
-            header.classList.add('bright');
-            header.innerHTML = this.translate('NETWORK_INTERFACES');
-            appendTo.appendChild(header);
-        }
-        for (let i = 0; i < typeKeys.length; i += 1) {
-            if ((this.config.showType === 'both' || this.config.showType === typeKeys[i]) && this.types.indexOf(typeKeys[i]) !== -1) {
-                const familyKeys = Object.keys(this.ips[typeKeys[i]]);
-                if (familyKeys.length > 0) {
-                    let macAddress = null;
-                    if (this.config.voice) {
-                        const type = document.createElement('div');
-                        type.classList.add('thin');
-                        type.innerHTML = typeKeys[i].toUpperCase();
-                        appendTo.appendChild(type);
-                    }
-                    for (let n = 0; n < familyKeys.length; n += 1) {
-                        if (this.config.showFamily === 'both' || this.config.showFamily === this.ips[typeKeys[i]][familyKeys[n]].family) {
-                            const ip = document.createElement('div');
-                            if (this.config.voice) {
-                                macAddress = this.ips[typeKeys[i]][familyKeys[n]].mac;
-                                ip.innerHTML = `${this.ips[typeKeys[i]][familyKeys[n]].family}
-                                    : ${this.ips[typeKeys[i]][familyKeys[n]].address}`;
-                            } else {
-                                ip.classList.add('line');
-                                ip.innerHTML = `${typeKeys[i].toUpperCase()} \
-                                    ${this.ips[typeKeys[i]][familyKeys[n]].family}: \
-                                    ${this.ips[typeKeys[i]][familyKeys[n]].address}`;
-                            }
-                            appendTo.appendChild(ip);
-                        }
-                    }
-                    if (this.config.voice && macAddress) {
-                        const mac = document.createElement('div');
-                        mac.innerHTML = `MAC: ${macAddress}`;
-                        appendTo.appendChild(mac);
-                    }
-                }
+    /**
+     * @function getMacAddress
+     * @description Helper function to get mac adress from array item.
+     *
+     * @param {Object[]} array - Objects with property mac for the mac address.
+     *
+     * @returns {string} Mac address or empty string.
+     */
+    getMacAddress(array= []) {
+        for (const item of array) {
+            if (item.mac) {
+                return `(MAC: ${item.mac})`;
             }
         }
+
+        return '';
     },
 
-    appendHelp(appendTo) {
-        appendTo.classList.add('modal', 'align-left');
-        
-        const title = document.createElement('h1');
-        title.classList.add('medium', 'bright');
-        title.innerHTML = `${this.name} - ${this.translate('COMMAND_LIST')}`;
-        appendTo.appendChild(title);
+    /**
+     * @function includes
+     * @description Helper function to check if item is included in the array.
+     *
+     * @param {string[]} array - Array of texts.
+     * @param {string} item - Text that should be checked for.
+     *
+     * @returns {boolean} Is the item included in the array?
+     */
+    includes(array= [], item) {
+        return array.includes(item);
+    },
 
-        const mode = document.createElement('div');
-        mode.innerHTML = `${this.translate('MODE')}: ${this.voice.mode}`;
-        appendTo.appendChild(mode);
-
-        const listLabel = document.createElement('div');
-        listLabel.innerHTML = `${this.translate('VOICE_COMMANDS')}:`;
-        appendTo.appendChild(listLabel);
-
-        const list = document.createElement('ul');
-        for (let i = 0; i < this.voice.sentences.length; i += 1) {
-            const item = document.createElement('li');
-            item.innerHTML = this.voice.sentences[i];
-            list.appendChild(item);
-        }
-        appendTo.appendChild(list);
+    /**
+     * @function addGlobals
+     * @description Adds custom globals used by the nunjuck template.
+     *
+     * @returns {void}
+     */
+    addGlobals() {
+        this.nunjucksEnvironment().addGlobal('includes', this.includes);
     }
 });
