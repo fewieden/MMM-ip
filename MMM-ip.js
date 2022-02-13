@@ -7,6 +7,8 @@
  * @see  https://github.com/fewieden/MMM-ip
  */
 
+/* global Module Log */
+
 /**
  * @external Module
  * @see https://github.com/MichMich/MagicMirror/blob/master/js/module.js
