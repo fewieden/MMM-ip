@@ -34,6 +34,7 @@ IPv4/IPv6 Network Address Module for MagicMirror<sup>2</sup>
 | `dimmed` | `true` | Boolean for discrete visibility |
 | `families` | `['IPv4', 'IPv6']` | Array of network address families to display. Possible values in the array are: `'IPv4'` and `'IPv6'`. |
 | `types` | `['eth0', 'wlan0']` | Array of network interface types to display. Check the types of your network cards in the logs. They get logged on MagicMirror start. |
+| `updateInterval` | `300000` (5 mins) | How often should the network interface list be updated in milliseconds? |
 
 ## OPTIONAL: Voice Control and Modal
 

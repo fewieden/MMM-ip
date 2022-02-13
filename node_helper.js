@@ -11,7 +11,7 @@
  * @external os
  * @see https://nodejs.org/api/os.html
  */
-const interfaces = require('os').networkInterfaces();
+const os = require('os');
 
 /**
  * @external node_helper
@@ -38,15 +38,13 @@ module.exports = NodeHelper.create({
     requiresVersion: '2.15.0',
 
     /**
-     * @function start
-     * @description Logs a start message to the console.
-     * @override
+     * @function getNetworkInterfaces
+     * @description Returns network interfaces from the computer.
      *
-     * @returns {void}
+     * @returns {object[]} List of network interfaces.
      */
-    start() {
-        Log.log(`Starting module helper: ${this.name}`);
-        Log.log(`Available network interface types: ${Object.keys(interfaces).join(', ')}`);
+    getNetworkInterfaces() {
+        return os.networkInterfaces();
     },
 
     /**
@@ -58,9 +56,15 @@ module.exports = NodeHelper.create({
      *
      * @returns {void}
      */
-    socketNotificationReceived(notification) {
-        if (notification === 'GET_NETWORK_INTERFACES') {
+    socketNotificationReceived(notification, payload) {
+        if (notification === 'CONFIG') {
+            const interfaces = this.getNetworkInterfaces();
+            Log.info(`Available network interface types: ${Object.keys(interfaces).join(', ')}`);
             this.sendSocketNotification('NETWORK_INTERFACES', interfaces);
+
+            setInterval(() => {
+                this.sendSocketNotification('NETWORK_INTERFACES', this.getNetworkInterfaces());
+            }, payload.updateInterval);
         }
     }
 });

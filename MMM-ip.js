@@ -54,7 +54,8 @@ Module.register('MMM-ip', {
         fontSize: 9,
         dimmed: true,
         types: ['eth0', 'wlan0'],
-        families: ['IPv4', 'IPv6']
+        families: ['IPv4', 'IPv6'],
+        updateInterval: 5 * 60 * 1000 // every 5 minutes
     },
 
     /**
@@ -106,7 +107,7 @@ Module.register('MMM-ip', {
     start() {
         Log.info(`Starting module: ${this.name}`);
         this.addGlobals();
-        this.sendSocketNotification('GET_NETWORK_INTERFACES');
+        this.sendSocketNotification('CONFIG', this.config);
     },
 
     /**
