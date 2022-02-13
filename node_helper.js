@@ -8,16 +8,22 @@
  */
 
 /**
+ * @external os
+ * @see https://nodejs.org/api/os.html
+ */
+const interfaces = require('os').networkInterfaces();
+
+/**
  * @external node_helper
  * @see https://github.com/MichMich/MagicMirror/blob/master/modules/node_modules/node_helper/index.js
  */
 const NodeHelper = require('node_helper');
 
 /**
- * @external os
- * @see https://nodejs.org/api/os.html
+ * @external logger
+ * @see https://github.com/MichMich/MagicMirror/blob/master/js/logger.js
  */
-const interfaces = require('os').networkInterfaces();
+const Log = require('logger');
 
 /**
  * @module node_helper
@@ -25,8 +31,12 @@ const interfaces = require('os').networkInterfaces();
  *
  * @requires external:os
  * @requires external:node_helper
+ * @requires external:logger
  */
 module.exports = NodeHelper.create({
+    /** @member {string} requiresVersion - Defines the minimum version of MagicMirror to run this node_helper. */
+    requiresVersion: '2.15.0',
+
     /**
      * @function start
      * @description Logs a start message to the console.
@@ -35,8 +45,8 @@ module.exports = NodeHelper.create({
      * @returns {void}
      */
     start() {
-        console.log(`Starting module helper: ${this.name}`);
-        console.log(`Available network interface types: ${Object.keys(interfaces).join(', ')}`);
+        Log.log(`Starting module helper: ${this.name}`);
+        Log.log(`Available network interface types: ${Object.keys(interfaces).join(', ')}`);
     },
 
     /**
