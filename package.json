@@ -1,6 +1,6 @@
 {
   "name": "mmm-ip",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "IPv4/IPv6 Network Address Module for MagicMirror2",
   "scripts": {
     "lint": "eslint .",

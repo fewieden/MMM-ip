@@ -1,10 +1,8 @@
 # MMM-ip Changelog
 
-## [Unreleased]
+## [2.1.0]
 
 MagicMirror² version >= 2.15.0 required.
-
-### Fixed
 
 ### Added
 
