@@ -1,5 +1,23 @@
 # MMM-ip Changelog
 
+## [2.1.0]
+
+MagicMirror² version >= 2.15.0 required.
+
+### Added
+
+* Added config option `updateInterval`
+* Github actions
+
+### Changed
+
+* Node helper logs are now done through MagicMirror logger
+* Github config files
+
+### Removed
+
+* Travis-CI integration
+
 ## [2.0.0]
 
 ### Added

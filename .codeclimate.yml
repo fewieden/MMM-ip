@@ -3,7 +3,7 @@ engines:
     enabled: true
     config:
       languages:
-      - javascript
+        - javascript
   eslint:
     enabled: true
     channel: "eslint-6"

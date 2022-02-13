@@ -5,7 +5,7 @@
         "sourceType": "module"
     },
     "settings": {
-        "import/core-modules": [ "node_helper" ]
+        "import/core-modules": ["logger", "node_helper"]
     },
     "env": {
         "browser": true,

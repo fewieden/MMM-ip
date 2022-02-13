@@ -7,6 +7,8 @@
  * @see  https://github.com/fewieden/MMM-ip
  */
 
+/* global Module Log */
+
 /**
  * @external Module
  * @see https://github.com/MichMich/MagicMirror/blob/master/js/module.js
@@ -54,7 +56,8 @@ Module.register('MMM-ip', {
         fontSize: 9,
         dimmed: true,
         types: ['eth0', 'wlan0'],
-        families: ['IPv4', 'IPv6']
+        families: ['IPv4', 'IPv6'],
+        updateInterval: 5 * 60 * 1000 // every 5 minutes
     },
 
     /**
@@ -106,7 +109,7 @@ Module.register('MMM-ip', {
     start() {
         Log.info(`Starting module: ${this.name}`);
         this.addGlobals();
-        this.sendSocketNotification('GET_NETWORK_INTERFACES');
+        this.sendSocketNotification('CONFIG', this.config);
     },
 
     /**
@@ -164,7 +167,6 @@ Module.register('MMM-ip', {
         if (/(HIDE)/g.test(data) && !/(SHOW)/g.test(data)) {
             this.sendNotification('CLOSE_MODAL');
         } else if (/(SHOW)/g.test(data) && !/(HIDE)/g.test(data)) {
-            console.log(this.interfaces);
             this.sendNotification('OPEN_MODAL', {
                 template: 'templates/InterfaceModal.njk',
                 data: {
@@ -207,7 +209,6 @@ Module.register('MMM-ip', {
     socketNotificationReceived(notification, payload) {
         if (notification === 'NETWORK_INTERFACES') {
             this.interfaces = payload;
-            Log.info('interfaces', payload);
             this.updateDom(300);
         }
     },
@@ -220,27 +221,10 @@ Module.register('MMM-ip', {
      *
      * @returns {string} Mac address or empty string.
      */
-    getMacAddress(array= []) {
-        for (const item of array) {
-            if (item.mac) {
-                return `(MAC: ${item.mac})`;
-            }
-        }
+    getMacAddress(array = []) {
+        const itemWithMacAddress = array.find(item => item.mac);
 
-        return '';
-    },
-
-    /**
-     * @function includes
-     * @description Helper function to check if item is included in the array.
-     *
-     * @param {string[]} array - Array of texts.
-     * @param {string} item - Text that should be checked for.
-     *
-     * @returns {boolean} Is the item included in the array?
-     */
-    includes(array= [], item) {
-        return array.includes(item);
+        return itemWithMacAddress ? `(MAC: ${itemWithMacAddress.mac})` : '';
     },
 
     /**
@@ -250,6 +234,6 @@ Module.register('MMM-ip', {
      * @returns {void}
      */
     addGlobals() {
-        this.nunjucksEnvironment().addGlobal('includes', this.includes);
+        this.nunjucksEnvironment().addGlobal('includes', (array = [], item) => array.includes(item));
     }
 });

@@ -8,16 +8,22 @@
  */
 
 /**
+ * @external os
+ * @see https://nodejs.org/api/os.html
+ */
+const os = require('os');
+
+/**
  * @external node_helper
  * @see https://github.com/MichMich/MagicMirror/blob/master/modules/node_modules/node_helper/index.js
  */
 const NodeHelper = require('node_helper');
 
 /**
- * @external os
- * @see https://nodejs.org/api/os.html
+ * @external logger
+ * @see https://github.com/MichMich/MagicMirror/blob/master/js/logger.js
  */
-const interfaces = require('os').networkInterfaces();
+const Log = require('logger');
 
 /**
  * @module node_helper
@@ -25,18 +31,20 @@ const interfaces = require('os').networkInterfaces();
  *
  * @requires external:os
  * @requires external:node_helper
+ * @requires external:logger
  */
 module.exports = NodeHelper.create({
+    /** @member {string} requiresVersion - Defines the minimum version of MagicMirror to run this node_helper. */
+    requiresVersion: '2.15.0',
+
     /**
-     * @function start
-     * @description Logs a start message to the console.
-     * @override
+     * @function getNetworkInterfaces
+     * @description Returns network interfaces from the computer.
      *
-     * @returns {void}
+     * @returns {object[]} List of network interfaces.
      */
-    start() {
-        console.log(`Starting module helper: ${this.name}`);
-        console.log(`Available network interface types: ${Object.keys(interfaces).join(', ')}`);
+    getNetworkInterfaces() {
+        return os.networkInterfaces();
     },
 
     /**
@@ -48,9 +56,15 @@ module.exports = NodeHelper.create({
      *
      * @returns {void}
      */
-    socketNotificationReceived(notification) {
-        if (notification === 'GET_NETWORK_INTERFACES') {
+    socketNotificationReceived(notification, payload) {
+        if (notification === 'CONFIG') {
+            const interfaces = this.getNetworkInterfaces();
+            Log.info(`Available network interface types: ${Object.keys(interfaces).join(', ')}`);
             this.sendSocketNotification('NETWORK_INTERFACES', interfaces);
+
+            setInterval(() => {
+                this.sendSocketNotification('NETWORK_INTERFACES', this.getNetworkInterfaces());
+            }, payload.updateInterval);
         }
     }
 });
