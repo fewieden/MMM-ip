@@ -165,7 +165,6 @@ Module.register('MMM-ip', {
         if (/(HIDE)/g.test(data) && !/(SHOW)/g.test(data)) {
             this.sendNotification('CLOSE_MODAL');
         } else if (/(SHOW)/g.test(data) && !/(HIDE)/g.test(data)) {
-            console.log(this.interfaces);
             this.sendNotification('OPEN_MODAL', {
                 template: 'templates/InterfaceModal.njk',
                 data: {
@@ -208,7 +207,6 @@ Module.register('MMM-ip', {
     socketNotificationReceived(notification, payload) {
         if (notification === 'NETWORK_INTERFACES') {
             this.interfaces = payload;
-            Log.info('interfaces', payload);
             this.updateDom(300);
         }
     },
@@ -221,27 +219,10 @@ Module.register('MMM-ip', {
      *
      * @returns {string} Mac address or empty string.
      */
-    getMacAddress(array= []) {
-        for (const item of array) {
-            if (item.mac) {
-                return `(MAC: ${item.mac})`;
-            }
-        }
+    getMacAddress(array = []) {
+        const itemWithMacAddress = array.find(item => item.mac);
 
-        return '';
-    },
-
-    /**
-     * @function includes
-     * @description Helper function to check if item is included in the array.
-     *
-     * @param {string[]} array - Array of texts.
-     * @param {string} item - Text that should be checked for.
-     *
-     * @returns {boolean} Is the item included in the array?
-     */
-    includes(array= [], item) {
-        return array.includes(item);
+        return itemWithMacAddress ? `(MAC: ${itemWithMacAddress.mac})` : '';
     },
 
     /**
@@ -251,6 +232,6 @@ Module.register('MMM-ip', {
      * @returns {void}
      */
     addGlobals() {
-        this.nunjucksEnvironment().addGlobal('includes', this.includes);
+        this.nunjucksEnvironment().addGlobal('includes', (array = [], item) => array.includes(item));
     }
 });
