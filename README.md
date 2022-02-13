@@ -50,3 +50,8 @@ The voice control mode for this module is `NETWORK`
 * CLOSE HELP -> Hides the help information.
 * SHOW INTERFACES -> Shows network interfaces based on config options with mac addresses.
 * HIDE INTERFACES -> Hide network interfaces.
+
+## Developer
+
+* `npm run lint` - Lints JS and CSS files.
+* `npm run docs` - Generates documentation.
