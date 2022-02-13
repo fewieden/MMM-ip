@@ -23,7 +23,7 @@
   "homepage": "https://github.com/fewieden/MMM-ip#readme",
   "devDependencies": {
     "eslint": "^6.8.0",
-    "eslint-config-recommended": "^4.0.0",
-    "jsdoc": "^3.6.4"
+    "eslint-config-recommended": "^4.1.0",
+    "jsdoc": "^3.6.10"
   }
 }
